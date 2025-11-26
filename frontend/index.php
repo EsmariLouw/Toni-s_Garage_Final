@@ -306,7 +306,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
                           </h3>
 
                           <p class="vehicle-price">
-                            <?php echo number_format($vehicle['price'], 0); ?>€/day
+                            <?php echo number_format($vehicle['price'], 0); ?>€
                           </p>
 
                           <p class="vehicle-tagline">
