@@ -1,49 +1,53 @@
 <?php
-// Build absolute URL to api.php in this same folder
-$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host   = $_SERVER['HTTP_HOST'];
+  // absolute URL to api.php in this folder
+  $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+  $host   = $_SERVER['HTTP_HOST'];
 
-// Hard-fix for RIT server structure
-$api = 'https://solace.ist.rit.edu/~it4527/BackEnd/backend/api.php';
+  // server structure herd fix for RIT structure
+  $api = 'https://solace.ist.rit.edu/~it4527/BackEnd/backend/api.php';
 
 
-$apiKey = 'YOUR_SUPER_SECRET_KEY_HERE'; // must match api.php
+  $apiKey = 'YOUR_SUPER_SECRET_KEY_HERE'; // must match api.php
 
-function http_get_json($url, $apiKey)
-{
-  if (function_exists('curl_init')) {
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_FOLLOWLOCATION => true,
-      CURLOPT_TIMEOUT => 10,
-      CURLOPT_HTTPHEADER => ['Accept: application/json', 'X-API-Key: ' . $apiKey],
+  function http_get_json($url, $apiKey) {
+
+    if (function_exists('curl_init')) {
+
+      $ch = curl_init($url);
+
+      curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_TIMEOUT => 10,
+        CURLOPT_HTTPHEADER => ['Accept: application/json', 'X-API-Key: ' . $apiKey],
+      ]);
+
+      $resp = curl_exec($ch);
+      $err  = curl_error($ch);
+      $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+      
+      if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url ($err)"];
+      $data = json_decode($resp, true);
+      return is_array($data) ? $data : ['ok' => false, 'error' => "Invalid JSON (HTTP $status)", 'raw' => $resp];
+    }
+
+    $ctx = stream_context_create([
+      'http' => [
+        'method' => 'GET',
+        'header' => "Accept: application/json\r\nX-API-Key: $apiKey\r\n",
+        'timeout' => 10
+      ]
     ]);
-    $resp = curl_exec($ch);
-    $err  = curl_error($ch);
-    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-    curl_close($ch);
-    if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url ($err)"];
+
+    $resp = @file_get_contents($url, false, $ctx);
+    if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url"];
     $data = json_decode($resp, true);
-    return is_array($data) ? $data : ['ok' => false, 'error' => "Invalid JSON (HTTP $status)", 'raw' => $resp];
+    return is_array($data) ? $data : ['ok' => false, 'error' => 'Invalid JSON', 'raw' => $resp];
   }
-  $ctx = stream_context_create([
-    'http' => [
-      'method' => 'GET',
-      'header' => "Accept: application/json\r\nX-API-Key: $apiKey\r\n",
-      'timeout' => 10
-    ]
-  ]);
-  $resp = @file_get_contents($url, false, $ctx);
-  if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url"];
-  $data = json_decode($resp, true);
-  return is_array($data) ? $data : ['ok' => false, 'error' => 'Invalid JSON', 'raw' => $resp];
-}
 
-// Call the API to get featured vehicles
-$featured = http_get_json($api . '?action=featured', $apiKey);
+  // call the API to get featured vehicles
+  $featured = http_get_json($api . '?action=featured', $apiKey);
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -52,11 +56,11 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Car Dealership - Find Your Perfect Ride</title>
-  <!-- Bootstrap CSS -->
+  <!-- bootstrap -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
     rel="stylesheet" />
-  <!-- Bootstrap Icons -->
+  <!-- icons -->
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
@@ -64,18 +68,17 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
 </head>
 
 <body>
-  <!-- Header -->
+  <!-- header changed -->
   <header>
     <div class="navbar">
       <div class="logo">Toni's garage</div>
       <nav class="nav-links">
-        <a href="#home">Home</a>
-        <a href="#features">Features</a>
-        <a href="#special-deals">Special Deals</a>
-        <a href="#about">About</a>
+        <a href="index.php">Home</a>
+        <a href="inventory.php">Inventory</a>
+        <a href="about.php">About</a>
+        <a href="index.php#contact">Contact</a>
       </nav>
       <div class="right-buttons">
-        <a href="#contact" class="contact-link">Contact</a>
         <button class="login-btn" onclick="window.location.href='login.html'">
           Log in
         </button>
@@ -83,7 +86,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
     </div>
   </header>
 
-  <!-- Hero section -->
+  <!-- Above fold -->
   <section class="hero" id="home">
     <div class="hero-content">
       <div class="hero-badge">Premium Dealership</div>
@@ -96,7 +99,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
       <div class="hero-buttons">
         <button
           class="main-btn"
-          onclick="window.location.href='#special-deals'">
+          onclick="window.location.href='inventory.php'">
           Browse Inventory
           <svg
             width="20"
@@ -127,7 +130,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
     </div>
   </section>
 
-  <!-- Features Section -->
+  <!-- Features -->
   <section class="features" id="features">
     <div class="features-header">
       <span class="section-badge">Why Choose Us</span>
@@ -170,7 +173,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
           Clear daily rates, deposits, and fees. No hidden costs or surprises
           at checkout. What you see is what you pay.
         </p>
-        <a href="#" class="feature-link">Learn more →</a>
+        <a href="#" class="feature-link">Learn more â†’</a>
       </div>
       <div class="feature-card featured">
         <div class="featured-badge">Most Popular</div>
@@ -199,7 +202,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
           Pick up today or plan ahead. Modify your bookings up to 24 hours
           before. We work around your schedule.
         </p>
-        <a href="#" class="feature-link">Learn more →</a>
+        <a href="#" class="feature-link">Learn more â†’</a>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
@@ -228,12 +231,12 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
           Well-maintained fleet with verified maintenance records. Every
           vehicle undergoes rigorous inspection.
         </p>
-        <a href="#" class="feature-link">Learn more →</a>
+        <a href="#" class="feature-link">Learn more â†’</a>
       </div>
     </div>
   </section>
 
-  <!-- Featured Vehicles Slider -->
+  <!-- Featured vehicles => slider -->
   <section class="featured-vehicles" id="special-deals">
     <div class="container">
       <div class="features-header text-center mb-5">
@@ -242,7 +245,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
         <p class="section-subtitle">Check out our best deals this week</p>
       </div>
 
-      <!-- Vehicle Carousel -->
+      <!-- Carousel -->
       <div
         id="vehicleCarousel"
         class="carousel slide"
@@ -306,7 +309,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
                           </h3>
 
                           <p class="vehicle-price">
-                            <?php echo number_format($vehicle['price'], 0); ?>€
+                            <?php echo number_format($vehicle['price'], 0); ?>â‚¬
                           </p>
 
                           <p class="vehicle-tagline">
@@ -370,7 +373,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
       </div>
   </section>
 
-  <!-- Call to Action -->
+  <!-- Inventory -->
   <section class="cta-section" id="inventory">
     <div class="cta-content">
       <h2>Ready to Find Your Perfect Vehicle?</h2>
@@ -380,7 +383,7 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
       </p>
       <button
         class="cta-btn"
-        onclick="alert('Vehicle selection page coming soon!')">
+        onclick="window.location.href='inventory.php'">
         Browse Our Inventory
         <svg
           width="20"
@@ -412,7 +415,8 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
           <li><a href="#home">Home</a></li>
           <li><a href="#features">Features</a></li>
           <li><a href="#special-deals">Special Deals</a></li>
-          <li><a href="#about">About Us</a></li>
+          <li><a href="inventory.php">Inventory</a></li>
+          <li><a href="about.php">About Us</a></li>
         </ul>
       </div>
       <div class="footer-section">
@@ -431,13 +435,12 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Car Dealership. Built for course project.</p>
+      <p>Â© 2025 Car Dealership. Built for course project.</p>
     </div>
   </footer>
 
-  <!-- Bootstrap JS Bundle -->
+  <!-- bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="app.js"></script>
 </body>
-
 </html>
