@@ -102,4 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
+
 console.log('Car Dealership Website Loaded Successfully!');

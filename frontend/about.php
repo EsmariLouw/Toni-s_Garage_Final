@@ -16,7 +16,7 @@
   <!-- Header -->
   <header>
     <div class="navbar">
-      <div class="logo">Toni's garage</div>
+      <div class="logo" onclick="window.location.href='index.php'" style="cursor:pointer;">Toni's garage</div>
       <nav class="nav-links">
         <a href="index.php">Home</a>
         <a href="inventory.php">Inventory</a>

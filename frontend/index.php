@@ -1,52 +1,53 @@
 <?php
-  // absolute URL to api.php in this folder
-  $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-  $host   = $_SERVER['HTTP_HOST'];
+// absolute URL to api.php in this folder
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host   = $_SERVER['HTTP_HOST'];
 
-  // server structure herd fix for RIT structure
-  $api = 'https://solace.ist.rit.edu/~it4527/BackEnd/backend/api.php';
+// server structure herd fix for RIT structure
+$api = 'https://solace.ist.rit.edu/~it4527/BackEnd/backend/api.php';
 
 
-  $apiKey = 'YOUR_SUPER_SECRET_KEY_HERE'; // must match api.php
+$apiKey = 'YOUR_SUPER_SECRET_KEY_HERE'; // must match api.php
 
-  function http_get_json($url, $apiKey) {
+function http_get_json($url, $apiKey)
+{
 
-    if (function_exists('curl_init')) {
+  if (function_exists('curl_init')) {
 
-      $ch = curl_init($url);
+    $ch = curl_init($url);
 
-      curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_TIMEOUT => 10,
-        CURLOPT_HTTPHEADER => ['Accept: application/json', 'X-API-Key: ' . $apiKey],
-      ]);
-
-      $resp = curl_exec($ch);
-      $err  = curl_error($ch);
-      $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-      
-      if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url ($err)"];
-      $data = json_decode($resp, true);
-      return is_array($data) ? $data : ['ok' => false, 'error' => "Invalid JSON (HTTP $status)", 'raw' => $resp];
-    }
-
-    $ctx = stream_context_create([
-      'http' => [
-        'method' => 'GET',
-        'header' => "Accept: application/json\r\nX-API-Key: $apiKey\r\n",
-        'timeout' => 10
-      ]
+    curl_setopt_array($ch, [
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_TIMEOUT => 10,
+      CURLOPT_HTTPHEADER => ['Accept: application/json', 'X-API-Key: ' . $apiKey],
     ]);
 
-    $resp = @file_get_contents($url, false, $ctx);
-    if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url"];
+    $resp = curl_exec($ch);
+    $err  = curl_error($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+
+    if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url ($err)"];
     $data = json_decode($resp, true);
-    return is_array($data) ? $data : ['ok' => false, 'error' => 'Invalid JSON', 'raw' => $resp];
+    return is_array($data) ? $data : ['ok' => false, 'error' => "Invalid JSON (HTTP $status)", 'raw' => $resp];
   }
 
-  // call the API to get featured vehicles
-  $featured = http_get_json($api . '?action=featured', $apiKey);
+  $ctx = stream_context_create([
+    'http' => [
+      'method' => 'GET',
+      'header' => "Accept: application/json\r\nX-API-Key: $apiKey\r\n",
+      'timeout' => 10
+    ]
+  ]);
+
+  $resp = @file_get_contents($url, false, $ctx);
+  if ($resp === false) return ['ok' => false, 'error' => "Failed to fetch $url"];
+  $data = json_decode($resp, true);
+  return is_array($data) ? $data : ['ok' => false, 'error' => 'Invalid JSON', 'raw' => $resp];
+}
+
+// call the API to get featured vehicles
+$featured = http_get_json($api . '?action=featured', $apiKey);
 ?>
 
 <!DOCTYPE html>
@@ -71,7 +72,7 @@
   <!-- header changed -->
   <header>
     <div class="navbar">
-      <div class="logo">Toni's garage</div>
+      <div class="logo" onclick="window.location.href='index.php'" style="cursor:pointer;">Toni's garage</div>
       <nav class="nav-links">
         <a href="index.php">Home</a>
         <a href="inventory.php">Inventory</a>
@@ -85,6 +86,8 @@
       </div>
     </div>
   </header>
+
+
 
   <!-- Above fold -->
   <section class="hero" id="home">
@@ -309,7 +312,7 @@
                           </h3>
 
                           <p class="vehicle-price">
-                            <?php echo number_format($vehicle['price'], 0); ?>â‚¬
+                            <?php echo number_format($vehicle['price'], 0); ?>€
                           </p>
 
                           <p class="vehicle-tagline">
@@ -443,4 +446,5 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>
