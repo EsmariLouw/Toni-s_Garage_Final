@@ -259,9 +259,14 @@ $types = http_get_json($api . '?action=types', $apiKey);
               </div>
             </div>
             
-            <a href="vehicle.php?id=${vehicle.vehicle_id}" class="inventory-book-btn">
-              View Details
-            </a>
+            <div class="d-flex gap-2 mt-3">
+              <a href="vehicle.php?id=${vehicle.vehicle_id}" class="inventory-book-btn flex-grow-1 text-center">
+                View Details
+              </a>
+              <a href="additions.php?vehicle_id=${vehicle.vehicle_id}" class="inventory-book-btn flex-grow-1 text-center" style="background-color: #ff6b35; border-color: #ff6b35;">
+                <i class="bi bi-cart-plus"></i> Buy Now
+              </a>
+            </div>
           </div>
         </div>
       `).join('');

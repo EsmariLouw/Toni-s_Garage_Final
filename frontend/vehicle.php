@@ -192,7 +192,10 @@ if ($vehicle) {
                             <a href="inventory.php" class="btn btn-outline-secondary">
                                 ← Back to Inventory
                             </a>
-                            <a href="index.php#contact" class="btn btn-primary">
+                            <a href="additions.php?vehicle_id=<?php echo (int)$vehicle['vehicle_id']; ?>" class="btn btn-primary btn-lg">
+                                <i class="bi bi-cart-plus"></i> Buy Now
+                            </a>
+                            <a href="index.php#contact" class="btn btn-outline-primary">
                                 Contact Seller
                             </a>
                         </div>
