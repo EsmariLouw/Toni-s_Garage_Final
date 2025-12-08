@@ -64,15 +64,17 @@ if (!$vehicleId) {
     }
 }
 
-// Available additions (hardcoded for now, can be fetched from API later)
+// Available additions (hardcoded for now, can be fetched from API later) - Changed with our interior features
 $additions = [
-    ['id' => 1, 'name' => 'GPS Navigation System', 'price' => 500, 'description' => 'Advanced GPS with real-time traffic updates', 'icon' => 'bi-geo-alt'],
-    ['id' => 2, 'name' => 'Premium Radio System', 'price' => 300, 'description' => 'High-quality sound system with Bluetooth connectivity', 'icon' => 'bi-music-note-beamed'],
-    ['id' => 3, 'name' => 'Sunroof', 'price' => 800, 'description' => 'Panoramic sunroof for enhanced driving experience', 'icon' => 'bi-sun'],
-    ['id' => 4, 'name' => 'Leather Seats', 'price' => 1200, 'description' => 'Premium leather upholstery for comfort and style', 'icon' => 'bi-star'],
-    ['id' => 5, 'name' => 'Parking Sensors', 'price' => 400, 'description' => 'Front and rear parking sensors with camera', 'icon' => 'bi-camera-video'],
-    ['id' => 6, 'name' => 'Heated Seats', 'price' => 350, 'description' => 'Front and rear heated seats', 'icon' => 'bi-thermometer-sun'],
+    ['id' => 1, 'name' => 'Heated Seats',          'price' => 350,  'description' => 'Heating system for front and rear seats','heated_seats' => 1, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-thermometer-sun'],
+    ['id' => 2, 'name' => 'Automatic Air Conditioning', 'price' => 450,  'description' => 'Dual-zone automatic climate control','heated_seats' => 0, 'ac' => 1, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-snow'],
+    ['id' => 3, 'name' => 'Smart Touch Screen',    'price' => 600,  'description' => '10-inch digital infotainment display','heated_seats' => 0, 'ac' => 0, 'smart_screen' => 1, 'custom_steering' => 0, 'icon' => 'bi-tablet'],
+    ['id' => 4, 'name' => 'Custom Steering Wheel', 'price' => 500,  'description' => 'Sport leather steering wheel with controls', 'heated_seats' => 0, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 1, 'icon' => 'bi-circle-square'],
 ];
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -109,29 +111,29 @@ $additions = [
             <div class="row">
                 <div class="col-12">
                     <h1 class="mb-4">Choose Car Additions</h1>
-                    
+
                     <!-- Progress Steps -->
                     <div class="mb-5">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="text-center" style="flex: 1;">
-                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" 
-                                     style="width: 40px; height: 40px; font-weight: bold;">1</div>
+                                <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px; font-weight: bold;">1</div>
                                 <p class="mt-2 mb-0 text-muted"><small>Select Vehicle</small></p>
                             </div>
                             <div class="flex-grow-1 mx-2">
                                 <hr class="my-0">
                             </div>
                             <div class="text-center" style="flex: 1;">
-                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" 
-                                     style="width: 40px; height: 40px; font-weight: bold;">2</div>
+                                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px; font-weight: bold;">2</div>
                                 <p class="mt-2 mb-0"><strong>Choose Additions</strong></p>
                             </div>
                             <div class="flex-grow-1 mx-2">
                                 <hr class="my-0">
                             </div>
                             <div class="text-center" style="flex: 1;">
-                                <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center" 
-                                     style="width: 40px; height: 40px; font-weight: bold;">3</div>
+                                <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center"
+                                    style="width: 40px; height: 40px; font-weight: bold;">3</div>
                                 <p class="mt-2 mb-0 text-muted"><small>Payment</small></p>
                             </div>
                         </div>
@@ -153,10 +155,10 @@ $additions = [
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <img src="<?php echo htmlspecialchars($vehicle['vehicle_image_url'] ?? 'https://via.placeholder.com/200x150?text=No+Image'); ?>" 
-                                             alt="<?php echo htmlspecialchars($vehicle['name']); ?>"
-                                             class="img-fluid rounded"
-                                             onerror="this.src='https://via.placeholder.com/200x150?text=No+Image';">
+                                        <img src="<?php echo htmlspecialchars($vehicle['vehicle_image_url'] ?? 'https://via.placeholder.com/200x150?text=No+Image'); ?>"
+                                            alt="<?php echo htmlspecialchars($vehicle['name']); ?>"
+                                            class="img-fluid rounded"
+                                            onerror="this.src='https://via.placeholder.com/200x150?text=No+Image';">
                                     </div>
                                     <div class="col-md-9">
                                         <h4><?php echo htmlspecialchars($vehicle['name']); ?></h4>
@@ -176,20 +178,20 @@ $additions = [
                             <div class="card-body">
                                 <form id="additionsForm">
                                     <input type="hidden" name="vehicle_id" value="<?php echo (int)$vehicle['vehicle_id']; ?>">
-                                    
+
                                     <div class="row g-3">
                                         <?php foreach ($additions as $addition): ?>
                                             <div class="col-md-6">
-                                                <div class="form-check p-3 border rounded h-100 addition-card" 
-                                                     style="cursor: pointer; transition: all 0.3s;"
-                                                     onmouseover="this.style.backgroundColor='#f8f9fa';"
-                                                     onmouseout="this.style.backgroundColor='';">
-                                                    <input class="form-check-input" type="checkbox" 
-                                                           name="additions[]" 
-                                                           value="<?php echo $addition['id']; ?>" 
-                                                           id="addition<?php echo $addition['id']; ?>"
-                                                           data-price="<?php echo $addition['price']; ?>"
-                                                           onchange="updateTotalPrice()">
+                                                <div class="form-check p-3 border rounded h-100 addition-card"
+                                                    style="cursor: pointer; transition: all 0.3s;"
+                                                    onmouseover="this.style.backgroundColor='#f8f9fa';"
+                                                    onmouseout="this.style.backgroundColor='';">
+                                                    <input class="form-check-input" type="checkbox"
+                                                        name="additions[]"
+                                                        value="<?php echo $addition['id']; ?>"
+                                                        id="addition<?php echo $addition['id']; ?>"
+                                                        data-price="<?php echo $addition['price']; ?>"
+                                                        onchange="updateTotalPrice()">
                                                     <label class="form-check-label w-100" for="addition<?php echo $addition['id']; ?>" style="cursor: pointer;">
                                                         <div class="d-flex align-items-start">
                                                             <div class="me-3">
@@ -287,21 +289,21 @@ $additions = [
     <script src="app.js"></script>
     <script>
         const basePrice = <?php echo (int)($vehicle['price'] ?? 0); ?>;
-        
+
         // Update price when additions are selected
         function updateTotalPrice() {
             let additionsPrice = 0;
             const selectedAdditions = document.querySelectorAll('input[name="additions[]"]:checked');
-            
+
             selectedAdditions.forEach(checkbox => {
                 additionsPrice += parseInt(checkbox.dataset.price);
             });
-            
+
             document.getElementById('additionsPrice').textContent = additionsPrice.toLocaleString() + '€';
             const total = basePrice + additionsPrice;
             document.getElementById('totalPrice').textContent = total.toLocaleString() + '€';
         }
-        
+
         // Make addition cards clickable
         document.querySelectorAll('.addition-card').forEach(card => {
             card.addEventListener('click', function(e) {
@@ -312,18 +314,18 @@ $additions = [
                 }
             });
         });
-        
+
         function proceedToPayment() {
             const form = document.getElementById('additionsForm');
             const formData = new FormData(form);
             const vehicleId = formData.get('vehicle_id');
             const additions = formData.getAll('additions[]');
-            
+
             // Build query string for payment page
             const params = new URLSearchParams();
             params.append('vehicle_id', vehicleId);
             additions.forEach(id => params.append('additions[]', id));
-            
+
             // Redirect to payment page
             window.location.href = 'payment.php?' + params.toString();
         }
@@ -331,4 +333,3 @@ $additions = [
 </body>
 
 </html>
-

@@ -61,12 +61,10 @@ $errorMsg = '';
 
 // Available additions (same as additions.php)
 $allAdditions = [
-    1 => ['id' => 1, 'name' => 'GPS Navigation System', 'price' => 500, 'description' => 'Advanced GPS with real-time traffic updates'],
-    2 => ['id' => 2, 'name' => 'Premium Radio System', 'price' => 300, 'description' => 'High-quality sound system with Bluetooth connectivity'],
-    3 => ['id' => 3, 'name' => 'Sunroof', 'price' => 800, 'description' => 'Panoramic sunroof for enhanced driving experience'],
-    4 => ['id' => 4, 'name' => 'Leather Seats', 'price' => 1200, 'description' => 'Premium leather upholstery for comfort and style'],
-    5 => ['id' => 5, 'name' => 'Parking Sensors', 'price' => 400, 'description' => 'Front and rear parking sensors with camera'],
-    6 => ['id' => 6, 'name' => 'Heated Seats', 'price' => 350, 'description' => 'Front and rear heated seats'],
+    ['id' => 1, 'name' => 'Heated Seats',          'price' => 350,  'description' => 'Heating system for front and rear seats', 'heated_seats' => 1, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-thermometer-sun'],
+    ['id' => 2, 'name' => 'Automatic Air Conditioning', 'price' => 450,  'description' => 'Dual-zone automatic climate control', 'heated_seats' => 0, 'ac' => 1, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-snow'],
+    ['id' => 3, 'name' => 'Smart Touch Screen',    'price' => 600,  'description' => '10-inch digital infotainment display', 'heated_seats' => 0, 'ac' => 0, 'smart_screen' => 1, 'custom_steering' => 0, 'icon' => 'bi-tablet'],
+    ['id' => 4, 'name' => 'Custom Steering Wheel', 'price' => 500,  'description' => 'Sport leather steering wheel with controls', 'heated_seats' => 0, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 1, 'icon' => 'bi-circle-square'],
 ];
 
 // Get selected additions
@@ -207,7 +205,7 @@ $totalPrice = $basePrice + $additionsTotal;
                                 <div class="payment-form">
                                     <h3 class="mb-4"><i class="bi bi-credit-card"></i> Payment Information</h3>
 
-                                    <form id="paymentForm" method="POST" action="confirmation.php">
+                                    <form id="paymentForm" method="POST" action="../backend/api.php?action=payments">
                                         <input type="hidden" name="vehicle_id" value="<?php echo (int)$vehicle['vehicle_id']; ?>">
                                         <input type="hidden" name="additions" value="<?php echo htmlspecialchars(json_encode($additionsIds)); ?>">
                                         <input type="hidden" name="total_price" value="<?php echo $totalPrice; ?>">
@@ -215,26 +213,26 @@ $totalPrice = $basePrice + $additionsTotal;
                                         <!-- Cardholder Name -->
                                         <div class="row mb-3">
                                             <div class="col-md-6">
-                                                <label for="cardholder_fname" class="form-label">First Name *</label>
-                                                <input type="text" class="form-control" id="cardholder_fname"
-                                                    name="cardholder_fname" required
+                                                <label for="credit_holder_fname" class="form-label">First Name *</label>
+                                                <input type="text" class="form-control" id="credit_holder_fname"
+                                                    name="credit_holder_fname" required
                                                     placeholder="John">
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="cardholder_lname" class="form-label">Last Name *</label>
-                                                <input type="text" class="form-control" id="cardholder_lname"
-                                                    name="cardholder_lname" required
+                                                <label for="credit_holder_lname" class="form-label">Last Name *</label>
+                                                <input type="text" class="form-control" id="credit_holder_lname"
+                                                    name="credit_holder_lname" required
                                                     placeholder="Doe">
                                             </div>
                                         </div>
 
                                         <!-- Card Number -->
                                         <div class="mb-3">
-                                            <label for="card_number" class="form-label">
+                                            <label for="last_four" class="form-label">
                                                 <i class="bi bi-credit-card card-icon"></i> Card Number *
                                             </label>
-                                            <input type="text" class="form-control" id="card_number"
-                                                name="card_number" required
+                                            <input type="text" class="form-control" id="last_four"
+                                                name="last_four" required
                                                 placeholder="1234 5678 9012 3456"
                                                 maxlength="19"
                                                 oninput="formatCardNumber(this)">
