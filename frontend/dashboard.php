@@ -1,19 +1,18 @@
 <?php
-// 简易用户仪表盘（个人页）
 session_start();
 
-// 需要登录；未登录则跳转到登录页（保留跳转参数）
+// If not logged in, redirect to login.php
 if (empty($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     $target = urlencode($_SERVER['REQUEST_URI'] ?? 'dashboard.php');
     header("Location: login.php?redirect={$target}");
     exit;
 }
 
-// 占位的用户信息（如有则取 session）
+// Placeholder user data
 $userName = $_SESSION['user_name'] ?? 'User';
 $userEmail = $_SESSION['user_email'] ?? '';
 
-// 占位的车辆列表（后续替换为后端接口数据）
+// Placeholder data
 $myVehicles = [
     [
         'name' => 'Sample Vehicle 1',
