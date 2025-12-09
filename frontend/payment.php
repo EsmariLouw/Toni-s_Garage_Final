@@ -61,11 +61,12 @@ $errorMsg = '';
 
 // Available additions (same as additions.php)
 $allAdditions = [
-    ['id' => 1, 'name' => 'Heated Seats',          'price' => 350,  'description' => 'Heating system for front and rear seats', 'heated_seats' => 1, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-thermometer-sun'],
-    ['id' => 2, 'name' => 'Automatic Air Conditioning', 'price' => 450,  'description' => 'Dual-zone automatic climate control', 'heated_seats' => 0, 'ac' => 1, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-snow'],
-    ['id' => 3, 'name' => 'Smart Touch Screen',    'price' => 600,  'description' => '10-inch digital infotainment display', 'heated_seats' => 0, 'ac' => 0, 'smart_screen' => 1, 'custom_steering' => 0, 'icon' => 'bi-tablet'],
-    ['id' => 4, 'name' => 'Custom Steering Wheel', 'price' => 500,  'description' => 'Sport leather steering wheel with controls', 'heated_seats' => 0, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 1, 'icon' => 'bi-circle-square'],
+    1 => ['id' => 1, 'name' => 'Heated Seats',          'price' => 350, 'description' => 'Heating system for front and rear seats', 'heated_seats' => 1, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-thermometer-sun'],
+    2 => ['id' => 2, 'name' => 'Automatic Air Conditioning', 'price' => 450, 'description' => 'Dual-zone automatic climate control', 'heated_seats' => 0, 'ac' => 1, 'smart_screen' => 0, 'custom_steering' => 0, 'icon' => 'bi-snow'],
+    3 => ['id' => 3, 'name' => 'Smart Touch Screen',    'price' => 600, 'description' => '10-inch digital infotainment display', 'heated_seats' => 0, 'ac' => 0, 'smart_screen' => 1, 'custom_steering' => 0, 'icon' => 'bi-tablet'],
+    4 => ['id' => 4, 'name' => 'Custom Steering Wheel', 'price' => 500, 'description' => 'Sport leather steering wheel with controls', 'heated_seats' => 0, 'ac' => 0, 'smart_screen' => 0, 'custom_steering' => 1, 'icon' => 'bi-circle-square'],
 ];
+
 
 // Get selected additions
 $selectedAdditions = [];
@@ -358,6 +359,8 @@ $totalPrice = $basePrice + $additionsTotal;
                                                 <strong><?php echo number_format($basePrice); ?>€</strong>
                                             </div>
                                         </div>
+
+
 
                                         <?php if (!empty($selectedAdditions)): ?>
                                             <div class="mb-2">

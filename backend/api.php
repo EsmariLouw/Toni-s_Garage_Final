@@ -4,8 +4,10 @@
 // ================================================
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: https://' . $_SERVER['HTTP_HOST']); // same-origin
-header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-API-Key');
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -27,7 +29,7 @@ function require_api_key(): void
         $_SERVER['HTTP_X_API_KEY']
         ?? $headers['X-API-Key']
         ?? $headers['x-api-key']
-        ?? null;
+        ?? ($_POST['api_key'] ?? null);
 
     if (!$key || !hash_equals(API_KEY, trim($key))) {
         http_response_code(401);
@@ -38,15 +40,34 @@ function require_api_key(): void
         ]);
         exit;
     }
-
 }
-require_api_key(); // <<< enforce
 
-// === DATABASE CONFIGURATION ===
-$DB_HOST = 'localhost';
-$DB_NAME = 'it4527';
-$DB_USER = 'it4527';
-$DB_PASS = 'Optime9=saunter';
+$action = $_GET['action'] ?? 'vehicles';
+
+if ($action !== 'payments') {
+    require_api_key();
+}
+
+//“If my project is currently running on the Solace server, use the Solace database settings.”
+// “Otherwise, run it locally — use localhost database settings.”
+$host = $_SERVER['HTTP_HOST'] ?? '';
+
+//“Does the current website address contain solace.ist.rit.edu anywhere inside it?”
+if (strpos($host, 'solace.ist.rit.edu') !== false) {
+
+    // === DATABASE CONFIGURATION FOR SERVER===
+    $DB_HOST = 'localhost';
+    $DB_NAME = 'it4527';
+    $DB_USER = 'it4527';
+    $DB_PASS = 'Optime9=saunter';
+
+    // === DATABASE CONFIGURATION FOR LOCALHOST ===
+} else {
+    $DB_HOST = 'localhost';
+    $DB_NAME = 'toni_garage';
+    $DB_USER = 'root';       // or whatever you use locally
+    $DB_PASS = "";           // your local password
+}
 
 try {
     $pdo = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4", $DB_USER, $DB_PASS, [
@@ -55,7 +76,7 @@ try {
     ]);
 } catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'DB connection failed']);
+    echo json_encode(['ok' => false, 'error' => 'DB connection failed' . $e->getMessage()]);
     exit;
 }
 
@@ -134,7 +155,53 @@ if ($action === 'vehicle') {
                 LEFT JOIN transmission t ON f.transmission_id = t.transmission_id
                 WHERE v.is_featured = 1";
     ok($pdo->query($sql)->fetchAll());
+} elseif ($action === 'payments') {
 
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        fail(405, 'POST method required');
+    }
+
+    try {
+
+        $firstName  = $_POST['credit_holder_fname'] ?? null;
+        $lastName   = $_POST['credit_holder_lname'] ?? null;
+        $cardNumber = $_POST['last_four'] ?? null;
+
+        if (!$firstName || !$lastName || !$cardNumber) {
+            throw new Exception('Missing payment fields');
+        }
+
+        $firstName  = trim($firstName);
+        $lastName   = trim($lastName);
+        $cardNumber = preg_replace('/\D+/', '', $cardNumber); // only digits
+
+        $lastFourDigits = substr($cardNumber, -4);
+
+        $sql = "INSERT INTO payments 
+            (credit_holder_fname, credit_holder_lname, last_four, transaction_time)
+            VALUES (:credit_holder_fname, :credit_holder_lname, :last_four, NOW())";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':credit_holder_fname' => $firstName,
+            ':credit_holder_lname' => $lastName,
+            ':last_four'           => $lastFourDigits,
+        ]);
+
+        echo json_encode([
+            'ok' => true,
+            'message' => 'Payment stored successfully'
+        ]);
+        exit;
+    } catch (Throwable $e) {
+        http_response_code(500);
+        echo json_encode([
+            'ok' => false,
+            'error' => 'Payment insert failed',
+            'debug' => $e->getMessage()
+        ]);
+        exit;
+    }
 } else {
     fail(400, 'Unknown action. Try action=vehicle&id=1, action=vehicles, or action=types');
 }
