@@ -4,7 +4,7 @@
 
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host   = $_SERVER['HTTP_HOST'];
-$api    = 'https://solace.ist.rit.edu/~it4527/BackEnd/backend/api.php';
+$api    = 'https://solace.ist.rit.edu/~it4527/Toni-s_Garage_Final/backend/api.php';
 $apiKey = 'YOUR_SUPER_SECRET_KEY_HERE';
 
 function http_get_json($url, $apiKey)

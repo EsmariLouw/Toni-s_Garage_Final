@@ -7,7 +7,7 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['logged_in']) && $_SESSION['l
     exit;
 }
 
-$api = 'https://solace.ist.rit.edu/~it4527/BackEnd/backend/api.php';
+$api = 'https://solace.ist.rit.edu/~it4527/Toni-s_Garage_Final/backend/api.php';
 $apiKey = 'YOUR_SUPER_SECRET_KEY_HERE';
 
 $errorMsg = '';
