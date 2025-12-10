@@ -2,6 +2,8 @@
 // Step 2: Choose Car Additions
 // This page allows users to select additional features like GPS, Radio, etc.
 
+session_start();
+
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host   = $_SERVER['HTTP_HOST'];
 $api    = 'https://solace.ist.rit.edu/~it4527/Toni-s_Garage_Final/backend/api.php';

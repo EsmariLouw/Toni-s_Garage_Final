@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,6 +29,7 @@
       </nav>
       <div class="right-buttons">
           <?php
+          
           if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
               <button class="login-btn" onclick="window.location.href='logout.php'">
                   Log out
