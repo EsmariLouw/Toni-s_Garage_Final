@@ -56,6 +56,16 @@ body {
   outline: 0;
 }
 
+.error-message {
+  background: rgba(255,0,0,0.8);
+  border-radius: 4px;
+  color: white;
+  margin: 1rem auto;
+  max-width: 90%;
+  padding: .5rem;
+  text-align: center;
+}
+
 
 .login-submit {
   display: block;               

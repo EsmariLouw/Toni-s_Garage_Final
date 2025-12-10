@@ -106,6 +106,20 @@ header {
   transition: all 0.3s;
 }
 
+.logout-btn {
+  background-color: white;
+  color: black;
+  border: none;
+  padding: 10px 24px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+
+
 .login-btn:hover {
   background-color: #ddd;
   transform: translateY(-2px);
@@ -1218,6 +1232,7 @@ footer {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }

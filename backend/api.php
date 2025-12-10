@@ -66,7 +66,7 @@ if (strpos($host, 'solace.ist.rit.edu') !== false) {
     $DB_HOST = 'localhost';
     $DB_NAME = 'toni_garage';
     $DB_USER = 'root';       // or whatever you use locally
-    $DB_PASS = "";           // your local password
+    $DB_PASS = "Ivaylo2001!";           // your local password
 }
 
 try {
@@ -202,6 +202,39 @@ if ($action === 'vehicle') {
         ]);
         exit;
     }
+} else if ($action === 'login') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        fail(405, 'POST method required');
+    }
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    $email = trim($input['email'] ?? '');
+    $password = $input['password'] ?? '';
+
+    if ($email === '' || $password === '') {
+        fail(400, 'Email and password are required.');
+    }
+
+    $sql = "SELECT user_id, role_id, first_name, last_name, password, email,
+                   phone_number, address, state, zip_code, country
+            FROM users
+            WHERE email = :email
+              AND password = :password
+            LIMIT 1";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':email'    => $email,
+        ':password' => $password,   // plain text compare
+    ]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        fail(401, 'Invalid email or password.');
+    }
+
+    // Don’t send password back (we didn’t select it anyway)
+    ok($user);
 } else {
     fail(400, 'Unknown action. Try action=vehicle&id=1, action=vehicles, or action=types');
 }

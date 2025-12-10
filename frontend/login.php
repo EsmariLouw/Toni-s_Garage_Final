@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+$email = '';
+$errorMsg = '';
+
 if (isset($_SESSION['user_id']) && isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
     $redirect = $_GET['redirect'] ?? 'index.php';
     header('Location: ' . $redirect);
@@ -10,8 +13,8 @@ if (isset($_SESSION['user_id']) && isset($_SESSION['logged_in']) && $_SESSION['l
 $api = 'https://solace.ist.rit.edu/~it4527/Toni-s_Garage_Final/backend/api.php';
 $apiKey = 'YOUR_SUPER_SECRET_KEY_HERE';
 
-$errorMsg = '';
-$email = '';
+
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
@@ -37,24 +40,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ],
         ]);
         $resp = curl_exec($ch);
+
+        if ($resp === false) {
+            // cURL totally failed – let's see why
+            $curlError = curl_error($ch);
+            $curlInfo  = curl_getinfo($ch);
+
+            echo '<pre>';
+            echo "cURL ERROR:\n";
+            var_dump($curlError);
+            echo "\n\ncURL INFO:\n";
+            var_dump($curlInfo);
+            exit;
+        }
+
         $data = json_decode($resp, true);
 
-        if ($resp !== false && is_array($data) && !empty($data['ok']) && !empty($data['data'])) {
+
+        if (
+            $resp !== false &&
+            is_array($data) &&
+            isset($data['ok']) &&
+            $data['ok'] === true &&
+            isset($data['data']['user_id'])
+        ) {
             $_SESSION['logged_in'] = true;
-            $_SESSION['user_id'] = $data['data']['user_id'] ?? null;
+            $_SESSION['user_id']   = $data['data']['user_id'] ?? null;
             $_SESSION['user_email'] = $data['data']['email'] ?? $email;
-            $_SESSION['user_name'] = trim(($data['data']['first_name'] ?? '') . ' ' . ($data['data']['last_name'] ?? ''));
-            $_SESSION['role_id'] = $data['data']['role_id'] ?? null;
+            $_SESSION['user_name']  = trim(($data['data']['first_name'] ?? '') . ' ' . ($data['data']['last_name'] ?? ''));
+            $_SESSION['role_id']    = $data['data']['role_id'] ?? null;
 
             $redirect = $_GET['redirect'] ?? 'index.php';
             header('Location: ' . $redirect);
             exit;
         } else {
-            $errorMsg = (is_array($data) && isset($data['error'])) ? $data['error'] : 'Invalid email or password.';
+            $errorMsg = (is_array($data) && isset($data['error']))
+                ? $data['error']
+                : 'Invalid email or password.';
+                 $_SESSION['logged_in'] = false;
         }
     }
 }
 ?>
+
 
 
 

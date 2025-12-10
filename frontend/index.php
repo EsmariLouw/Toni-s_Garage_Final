@@ -1,4 +1,12 @@
 <?php
+
+
+session_start();
+/*if (empty($_SESSION['logged_in']) || $_SESSION['logged_in'] === true) {
+  header('Location: login.php');
+  exit;
+}*/
+
 // absolute URL to api.php in this folder
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host   = $_SERVER['HTTP_HOST'];
@@ -8,6 +16,10 @@ $api = 'https://solace.ist.rit.edu/~it4527/Toni-s_Garage_Final/backend/api.php';
 
 
 $apiKey = 'YOUR_SUPER_SECRET_KEY_HERE'; // must match api.php
+
+
+
+
 
 function http_get_json($url, $apiKey)
 {
@@ -80,9 +92,18 @@ $featured = http_get_json($api . '?action=featured', $apiKey);
         <a href="index.php#contact">Contact</a>
       </nav>
       <div class="right-buttons">
-        <button class="login-btn" onclick="window.location.href='login.html'">
-          Log in
-        </button>
+        <?php
+        if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
+          <button class="login-btn" onclick="window.location.href='logout.php'">
+            Log out
+          </button>
+        <?php else: ?>
+          <button class="logout-btn" onclick="window.location.href='login.php'">
+            Log in
+          </button>
+        <?php endif; ?>
+
+
       </div>
     </div>
   </header>
