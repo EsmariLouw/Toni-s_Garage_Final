@@ -99,9 +99,16 @@ $additions = [
                 <a href="index.php#contact">Contact</a>
             </nav>
             <div class="right-buttons">
-                <button class="login-btn" onclick="window.location.href='login.html'">
-                    Log in
-                </button>
+                <?php
+                if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
+                    <button class="login-btn" onclick="window.location.href='logout.php'">
+                        Log out
+                    </button>
+                <?php else: ?>
+                    <button class="logout-btn" onclick="window.location.href='login.php'">
+                        Log in
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </header>

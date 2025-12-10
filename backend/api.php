@@ -192,6 +192,7 @@ if ($action === 'vehicle') {
             'ok' => true,
             'message' => 'Payment stored successfully'
         ]);
+
         exit;
     } catch (Throwable $e) {
         http_response_code(500);

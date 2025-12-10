@@ -152,9 +152,16 @@ $totalPrice = $basePrice + $additionsTotal;
                 <a href="index.php#contact">Contact</a>
             </nav>
             <div class="right-buttons">
-                <button class="login-btn" onclick="window.location.href='login.html'">
-                    Log in
-                </button>
+                <?php
+                if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
+                    <button class="login-btn" onclick="window.location.href='logout.php'">
+                        Log out
+                    </button>
+                <?php else: ?>
+                    <button class="logout-btn" onclick="window.location.href='login.php'">
+                        Log in
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
     </header>
@@ -322,7 +329,7 @@ $totalPrice = $basePrice + $additionsTotal;
                                                 class="btn btn-outline-secondary">
                                                 <i class="bi bi-arrow-left"></i> Back to Additions
                                             </a>
-                                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" onclick="window.location.href='confirmation.php'">
                                                 <i class="bi bi-lock-fill"></i> Complete Purchase
                                             </button>
                                         </div>
