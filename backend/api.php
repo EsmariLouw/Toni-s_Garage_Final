@@ -66,7 +66,7 @@ if (strpos($host, 'solace.ist.rit.edu') !== false) {
     $DB_HOST = 'localhost';
     $DB_NAME = 'toni_garage';
     $DB_USER = 'root';       // or whatever you use locally
-    $DB_PASS = "Ivaylo2001!";           // your local password
+    $DB_PASS = "";           // your local password
 }
 
 try {
