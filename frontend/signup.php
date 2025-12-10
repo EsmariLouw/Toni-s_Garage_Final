@@ -1,37 +1,46 @@
 <?php
+session_start();
+
 $api = 'https://solace.ist.rit.edu/~it4527/Toni-s_Garage_Final/backend/api.php';
 $apiKey = 'YOUR_SUPER_SECRET_KEY_HERE';
 
-if (isset($_SESSION['user_id']) && isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-    $redirect = $_GET['redirect'] ?? 'index.php';
-    header('Location: ' . $redirect);
-    exit;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $fullName = $_POST['full_name'] ?? '';
+    $email    = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $confirm  = $_POST['confirm_password'] ?? '';
+
+    $ch = curl_init($api . '?action=signup');
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Accept: application/json',
+            'X-API-Key: ' . $apiKey,
+        ],
+        CURLOPT_POSTFIELDS => json_encode([
+            'full_name'        => $fullName,
+            'email'            => $email,
+            'password'         => $password,
+            'confirm_password' => $confirm,
+        ]),
+    ]);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+
+    if (!empty($data['ok'])) {
+        header('Location: login.php');
+        exit;
+    }
+
+    $error = $data['error'] ?? 'Signup failed';
 }
-
-$ch = curl_init($api . '?action=signup');
-$fullName = '';
-$email = '';
-$password = '';
-$confirm = '';
-
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_TIMEOUT => 10,
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode([
-        'full_name'        => $fullName,
-        'email'            => $email,
-        'password'         => $password,
-        'confirm_password' => $confirm,
-    ]),
-    CURLOPT_HTTPHEADER => [
-        'Content-Type: application/json',
-        'Accept: application/json',
-        'X-API-Key: ' . $apiKey,
-    ],
-]);
-$resp = curl_exec($ch);
 ?>
 
     <!DOCTYPE html>
