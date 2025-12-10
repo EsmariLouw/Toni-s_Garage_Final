@@ -232,6 +232,56 @@ if ($action === 'vehicle') {
 
     // Don’t send password back (we didn’t select it anyway)
     ok($user);
+} else if ($action === 'signup') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        fail(405, 'POST method required');
+    }
+
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    $fullName = trim($input['full_name'] ?? '');
+    $email    = trim($input['email'] ?? '');
+    $password = $input['password'] ?? '';
+    $confirm  = $input['confirm_password'] ?? '';
+
+    if ($fullName === '' || $email === '' || $password === '' || $confirm === '') {
+        fail(400, 'All fields are required.');
+    }
+
+    if ($password !== $confirm) {
+        fail(400, 'Passwords do not match.');
+    }
+
+    $parts = preg_split('/\s+/', $fullName, 2);
+    $firstName = $parts[0] ?? '';
+    $lastName  = $parts[1] ?? '';
+
+    $sql = "SELECT user_id FROM users WHERE email = :email LIMIT 1";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':email' => $email]);
+    if ($stmt->fetch()) {
+        fail(409, 'Email already registered.');
+    }
+
+    $sql = "INSERT INTO users (role_id, first_name, last_name, password, email)
+            VALUES (:role_id, :first_name, :last_name, :password, :email)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':role_id'    => 3,
+        ':first_name' => $firstName,
+        ':last_name'  => $lastName,
+        ':password'   => $password,
+        ':email'      => $email,
+    ]);
+
+    $newId = $pdo->lastInsertId();
+
+    ok([
+        'user_id'    => $newId,
+        'first_name' => $firstName,
+        'last_name'  => $lastName,
+        'email'      => $email,
+    ]);
 } else {
     fail(400, 'Unknown action. Try action=vehicle&id=1, action=vehicles, or action=types');
 }
