@@ -188,11 +188,7 @@ if ($action === 'vehicle') {
             ':last_four'           => $lastFourDigits,
         ]);
 
-        echo json_encode([
-            'ok' => true,
-            'message' => 'Payment stored successfully'
-        ]);
-
+        header('Location: ../frontend/confirmation.php');
         exit;
     } catch (Throwable $e) {
         http_response_code(500);

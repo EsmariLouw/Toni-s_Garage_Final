@@ -45,7 +45,7 @@ function http_get_json($url, $apiKey)
     $data = json_decode($resp, true);
     return is_array($data) ? $data : ['ok' => false, 'error' => 'Invalid JSON', 'raw' => $resp];
 }
-
+/*
 // Get order details from query parameters
 $vehicleId = filter_input(INPUT_GET, 'vehicle_id', FILTER_VALIDATE_INT);
 $additionsIds = isset($_GET['additions']) ? $_GET['additions'] : [];
@@ -55,10 +55,12 @@ if (!is_array($additionsIds)) {
 $additionsIds = array_filter(array_map('intval', $additionsIds));
 
 $totalPrice = filter_input(INPUT_GET, 'total', FILTER_VALIDATE_INT);
+*/
 $orderNumber = strtoupper(substr(md5(uniqid(rand(), true)), 0, 10));
 
-$vehicle = null;
+$vehicle = 99;
 $errorMsg = '';
+
 
 // Available additions (same as additions.php and payment.php)
 $allAdditions = [
@@ -67,7 +69,7 @@ $allAdditions = [
     3 => ['id' => 3, 'name' => 'Smart Touch Screen',    'price' => 600],
     4 => ['id' => 4, 'name' => 'Custom Steering Wheel', 'price' => 500],
 ];
-
+/*
 // Get selected additions
 $selectedAdditions = [];
 $additionsTotal = 0;
@@ -76,8 +78,8 @@ foreach ($additionsIds as $id) {
         $selectedAdditions[] = $allAdditions[$id];
         $additionsTotal += $allAdditions[$id]['price'];
     }
-}
-
+}*/
+/*
 if (!$vehicleId) {
     $errorMsg = 'Missing order information.';
 } else {
@@ -91,6 +93,7 @@ if (!$vehicleId) {
 
 $basePrice = $vehicle ? (int)($vehicle['price'] ?? 0) : 0;
 $calculatedTotal = $basePrice + $additionsTotal;
+*/
 ?>
 <!DOCTYPE html>
 <html lang="en">

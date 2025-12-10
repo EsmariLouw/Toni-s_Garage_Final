@@ -329,7 +329,7 @@ $totalPrice = $basePrice + $additionsTotal;
                                                 class="btn btn-outline-secondary">
                                                 <i class="bi bi-arrow-left"></i> Back to Additions
                                             </a>
-                                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" onclick="window.location.href='confirmation.php'">
+                                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                                                 <i class="bi bi-lock-fill"></i> Complete Purchase
                                             </button>
                                         </div>
