@@ -140,104 +140,138 @@ if ($vehicle) {
             <?php elseif ($vehicle): ?>
 
                 <!-- Top hero: image + main info -->
-                <div class="row g-4 align-items-center mb-5">
-                    <div class="col-md-6">
-                        <img
-                            src="<?php echo htmlspecialchars($vehicle['vehicle_image_url'] ?? 'https://via.placeholder.com/800x500?text=No+Image'); ?>"
-                            alt="<?php echo htmlspecialchars($vehicle['name']); ?>"
-                            class="img-fluid rounded shadow-sm"
-                            onerror="this.src='https://via.placeholder.com/800x500?text=No+Image';" />
-                        <?php if (!empty($vehicle['interior_image_url'])): ?>
-                            <div class="mt-3">
-                                <h6 class="text-muted mb-2">Interior preview</h6>
-                                <img
-                                    src="<?php echo htmlspecialchars($vehicle['interior_image_url']); ?>"
-                                    alt="Interior"
-                                    class="img-fluid rounded shadow-sm"
-                                    onerror="this.style.display='none';" />
+            <div class="row g-4 align-items-center mb-5">
+                <div class="col-md-6">
+
+                    <?php
+                    $mainImage = $vehicle['vehicle_image_url'] ?? 'https://via.placeholder.com/800x500?text=No+Image';
+                    $interiorImage = $vehicle['interior_image_url'] ?? null;
+                    ?>
+
+                    <?php if (!empty($interiorImage)): ?>
+                        <!-- Carousel -->
+                        <div id="vehicleCarousel" class="carousel slide shadow-sm rounded" data-bs-ride="carousel">
+                            <div class="carousel-inner rounded">
+
+                                <!-- Main image -->
+                                <div class="carousel-item active">
+                                    <img
+                                            src="<?php echo htmlspecialchars($mainImage); ?>"
+                                            class="d-block w-100 img-fluid"
+                                            alt="<?php echo htmlspecialchars($vehicle['name']); ?>"
+                                            onerror="this.src='https://via.placeholder.com/800x500?text=No+Image';">
+                                </div>
+
+                                <!-- Interior image -->
+                                <div class="carousel-item">
+                                    <img
+                                            src="<?php echo htmlspecialchars($interiorImage); ?>"
+                                            class="d-block w-100 img-fluid"
+                                            alt="Interior"
+                                            onerror="this.remove();">
+                                </div>
+
                             </div>
-                        <?php endif; ?>
-                    </div>
 
-                    <div class="col-md-6">
-                        <h1 class="mb-2">
-                            <?php echo htmlspecialchars($vehicle['name']); ?>
-                        </h1>
-                        <p class="text-muted mb-1">
-                            <?php echo htmlspecialchars(($vehicle['type_name'] ?? 'Vehicle') . ' • ' . ($vehicle['model'] ?? '')); ?>
-                        </p>
-                        <h2 class="text-primary mb-3">
-                            <?php echo number_format((int)($vehicle['price'] ?? 0)) . '€'; ?>
-                        </h2>
+                            <!-- Controls -->
+                            <button class="carousel-control-prev" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
 
-                        <div class="mb-3">
+                            <button class="carousel-control-next" type="button" data-bs-target="#vehicleCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        </div>
+
+                    <?php else: ?>
+                        <!-- Single image fallback -->
+                        <img
+                                src="<?php echo htmlspecialchars($mainImage); ?>"
+                                alt="<?php echo htmlspecialchars($vehicle['name']); ?>"
+                                class="img-fluid rounded shadow-sm"
+                                onerror="this.src='https://via.placeholder.com/800x500?text=No+Image';" />
+                    <?php endif; ?>
+
+                </div>
+                <div class="col-md-6">
+                    <h1 class="mb-2">
+                        <?php echo htmlspecialchars($vehicle['name']); ?>
+                    </h1>
+                    <p class="text-muted mb-1">
+                        <?php echo htmlspecialchars(($vehicle['type_name'] ?? 'Vehicle') . ' • ' . ($vehicle['model'] ?? '')); ?>
+                    </p>
+                    <h2 class="text-primary mb-3">
+                        <?php echo number_format((int)($vehicle['price'] ?? 0)) . '€'; ?>
+                    </h2>
+
+                    <div class="mb-3">
                             <span class="badge bg-<?php echo !empty($vehicle['owned_before']) ? 'warning' : 'success'; ?> me-2">
                                 <?php echo vehicle_condition($vehicle['owned_before'] ?? 0); ?>
                             </span>
-                            <?php if (!empty($vehicle['doc'])): ?>
-                                <span class="badge bg-secondary">
+                        <?php if (!empty($vehicle['doc'])): ?>
+                            <span class="badge bg-secondary">
                                     <i class="bi bi-calendar"></i>
                                     First registration: <?php echo htmlspecialchars($vehicle['doc']); ?>
                                 </span>
-                            <?php endif; ?>
-                        </div>
-
-                        <?php if (!empty($vehicle['description'])): ?>
-                            <p class="mb-4">
-                                <?php echo nl2br(htmlspecialchars($vehicle['description'])); ?>
-                            </p>
                         <?php endif; ?>
+                    </div>
 
-                        <div class="d-flex flex-wrap gap-2 mb-4">
-                            <a href="inventory.php" class="btn btn-outline-secondary">
-                                ← Back to Inventory
-                            </a>
-                            <a href="additions.php?vehicle_id=<?php echo (int)$vehicle['vehicle_id']; ?>" class="btn btn-primary btn-lg">
-                                <i class="bi bi-cart-plus"></i> Buy Now
-                            </a>
-                            <a href="index.php#contact" class="btn btn-outline-primary">
-                                Contact Seller
-                            </a>
-                        </div>
+                    <?php if (!empty($vehicle['description'])): ?>
+                        <p class="mb-4">
+                            <?php echo nl2br(htmlspecialchars($vehicle['description'])); ?>
+                        </p>
+                    <?php endif; ?>
 
-                        <div class="row g-3">
-                            <div class="col-sm-6">
-                                <div class="border rounded p-3 h-100">
-                                    <h6 class="text-uppercase text-muted small mb-2">Fuel & Mileage</h6>
-                                    <p class="mb-1"><i class="bi bi-fuel-pump me-2"></i>
-                                        Fuel: <?php echo htmlspecialchars($vehicle['fuel'] ?? 'N/A'); ?>
-                                    </p>
-                                    <p class="mb-0"><i class="bi bi-speedometer me-2"></i>
-                                        Mileage: <?php echo htmlspecialchars($vehicle['mileage'] ?? 'N/A'); ?>
-                                    </p>
-                                </div>
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <a href="inventory.php" class="btn btn-outline-secondary">
+                            ← Back to Inventory
+                        </a>
+                        <a href="additions.php?vehicle_id=<?php echo (int)$vehicle['vehicle_id']; ?>" class="btn btn-primary btn-lg">
+                            <i class="bi bi-cart-plus"></i> Buy Now
+                        </a>
+                        <a href="index.php#contact" class="btn btn-outline-primary">
+                            Contact Seller
+                        </a>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="border rounded p-3 h-100">
+                                <h6 class="text-uppercase text-muted small mb-2">Fuel & Mileage</h6>
+                                <p class="mb-1"><i class="bi bi-fuel-pump me-2"></i>
+                                    Fuel: <?php echo htmlspecialchars($vehicle['fuel'] ?? 'N/A'); ?>
+                                </p>
+                                <p class="mb-0"><i class="bi bi-speedometer me-2"></i>
+                                    Mileage: <?php echo htmlspecialchars($vehicle['mileage'] ?? 'N/A'); ?>
+                                </p>
                             </div>
-                            <div class="col-sm-6">
-                                <div class="border rounded p-3 h-100">
-                                    <h6 class="text-uppercase text-muted small mb-2">Performance</h6>
-                                    <p class="mb-1"><i class="bi bi-gear-wide-connected me-2"></i>
-                                        Engine: <?php echo htmlspecialchars($vehicle['engine_name'] ?? 'N/A'); ?>
-                                        <?php if (!empty($vehicle['engine_type'])): ?>
-                                            (<?php echo htmlspecialchars($vehicle['engine_type']); ?>)
-                                        <?php endif; ?>
-                                    </p>
-                                    <p class="mb-1">
-                                        <i class="bi bi-lightning-charge me-2"></i>
-                                        Horsepower: <?php echo htmlspecialchars($vehicle['horse_power'] ?? 'N/A'); ?>
-                                    </p>
-                                    <p class="mb-0">
-                                        <i class="bi bi-shift-fill me-2"></i>
-                                        Transmission:
-                                        <?php echo htmlspecialchars($vehicle['transmission_name'] ?? 'N/A'); ?>
-                                        <?php if (!empty($vehicle['transmission_type'])): ?>
-                                            (<?php echo htmlspecialchars($vehicle['transmission_type']); ?>)
-                                        <?php endif; ?>
-                                    </p>
-                                </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="border rounded p-3 h-100">
+                                <h6 class="text-uppercase text-muted small mb-2">Performance</h6>
+                                <p class="mb-1"><i class="bi bi-gear-wide-connected me-2"></i>
+                                    Engine: <?php echo htmlspecialchars($vehicle['engine_name'] ?? 'N/A'); ?>
+                                    <?php if (!empty($vehicle['engine_type'])): ?>
+                                        (<?php echo htmlspecialchars($vehicle['engine_type']); ?>)
+                                    <?php endif; ?>
+                                </p>
+                                <p class="mb-1">
+                                    <i class="bi bi-lightning-charge me-2"></i>
+                                    Horsepower: <?php echo htmlspecialchars($vehicle['horse_power'] ?? 'N/A'); ?>
+                                </p>
+                                <p class="mb-0">
+                                    <i class="bi bi-shift-fill me-2"></i>
+                                    Transmission:
+                                    <?php echo htmlspecialchars($vehicle['transmission_name'] ?? 'N/A'); ?>
+                                    <?php if (!empty($vehicle['transmission_type'])): ?>
+                                        (<?php echo htmlspecialchars($vehicle['transmission_type']); ?>)
+                                    <?php endif; ?>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
                 <!-- Additional info: colors, stats, seller -->
                 <div class="row g-4 mb-5">
@@ -249,8 +283,8 @@ if ($vehicle) {
                                     <?php foreach ($colorCodes as $code): ?>
                                         <div class="text-center">
                                             <div
-                                                class="rounded border mb-1"
-                                                style="width:40px;height:40px;background-color:#<?php echo htmlspecialchars($code); ?>;">
+                                                    class="rounded border mb-1"
+                                                    style="width:40px;height:40px;background-color:#<?php echo htmlspecialchars($code); ?>;">
                                             </div>
                                             <small>#<?php echo htmlspecialchars($code); ?></small>
                                         </div>
