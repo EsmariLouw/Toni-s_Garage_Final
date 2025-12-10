@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a class="signup-submit" href="signup.php">Sign up</a>
     </form>
 
-    <a href="#" class="login-forgot-pass">forgot password?</a>
+    <a href="index.php" class="login-forgot-pass">Login as a Guest?</a>
 
     <div class="underlay-photo"></div>
     <div class="underlay-black"></div>

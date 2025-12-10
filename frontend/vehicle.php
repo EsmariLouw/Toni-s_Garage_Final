@@ -235,9 +235,19 @@ if ($vehicle) {
                         <a href="inventory.php" class="btn btn-outline-secondary">
                             ← Back to Inventory
                         </a>
-                        <a href="additions.php?vehicle_id=<?php echo (int)$vehicle['vehicle_id']; ?>" class="btn btn-primary btn-lg">
-                            <i class="bi bi-cart-plus"></i> Buy Now
-                        </a>
+                        <?php
+                        if (!empty($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
+                            <a href="additions.php?vehicle_id=<?php echo (int)$vehicle['vehicle_id']; ?>" class="btn btn-primary btn-lg">
+                                <i class="bi bi-cart-plus"></i> Buy Now
+                            </a>
+                        <?php endif; ?>
+                        <?php
+                        if (empty($_SESSION['logged_in']) || $_SESSION['logged_in'] === false): ?>
+                            <a href="login.php" class="btn btn-primary btn-lg">
+                                <i class="bi bi-cart-plus"></i> Buy Now
+                            </a>
+                        <?php endif; ?>
+
                         <a href="index.php#contact" class="btn btn-outline-primary">
                             Contact Seller
                         </a>
